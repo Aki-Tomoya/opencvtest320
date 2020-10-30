@@ -6,9 +6,9 @@
 6
 7    <uses-sdk
 8        android:minSdkVersion="26"
-8-->G:\Importantfiles\STITP\Version\Opencv320test\openCVLibrary320\src\main\AndroidManifest.xml
+8-->G:\Importantfiles\STITP\Version\opencvtest\opencvtest320\openCVLibrary320\src\main\AndroidManifest.xml
 9        android:targetSdkVersion="29" />
-9-->G:\Importantfiles\STITP\Version\Opencv320test\openCVLibrary320\src\main\AndroidManifest.xml
+9-->G:\Importantfiles\STITP\Version\opencvtest\opencvtest320\openCVLibrary320\src\main\AndroidManifest.xml
 10   />
 11
 12</manifest>

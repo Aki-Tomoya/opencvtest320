@@ -12,7 +12,7 @@
         android:layout_height="50dp"
         android:layout_marginLeft="55dp"
         android:layout_marginTop="150dp"
-        android:text="这里是预览哦↓"
+        android:text="预览"
         android:textSize="30dp"
         android:gravity="center"
         />
@@ -27,6 +27,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+        
 
         <Button
             android:id="@+id/gophoto"

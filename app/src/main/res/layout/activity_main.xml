@@ -47,27 +47,26 @@
 
         </FrameLayout>
 
+        <org.angmarch.views.NiceSpinner
+            android:id="@+id/nice_spinner"
+            android:layout_width="135dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="120dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="516dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            />
+
     </com.skyfishjy.library.RippleBackground>
 
 
-
-    <Button
-        android:layout_toRightOf="@+id/gotodata"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/gotoset"
-        android:text="设置区"
-        />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/gotoopencv"
         android:text="opencv"
-        android:layout_below="@+id/gotoset"
         />
-
-
 
 
 </RelativeLayout>

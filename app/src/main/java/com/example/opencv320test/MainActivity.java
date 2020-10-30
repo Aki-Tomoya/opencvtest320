@@ -13,12 +13,18 @@ import android.widget.ImageView;
 
 import com.skyfishjy.library.RippleBackground;
 
+import org.angmarch.views.NiceSpinner;
+import org.angmarch.views.OnSpinnerItemSelectedListener;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +35,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //snipper框
+        NiceSpinner niceSpinner = (NiceSpinner) findViewById(R.id.nice_spinner);
+        List<String> dataset = new LinkedList<>(Arrays.asList("SRCNN", "Misakanet", "xujie", "aoran", "kaixuan"));
+        niceSpinner.attachDataSource(dataset);
+
+//        niceSpinner.setOnSpinnerItemSelectedListener(new OnSpinnerItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(NiceSpinner parent, View view, int position, long id) {
+//                // This example uses String, but your type can be any
+//                String item = parent.getItemAtPosition(position);
+//            }
+//        });
 
         //水波纹扩散特效
         rippleBackground=(RippleBackground)findViewById(R.id.content);
