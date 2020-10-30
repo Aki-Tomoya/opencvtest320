@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/bg2">
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="150dp"
+        android:text="Data"
+        android:textSize="45dp"
+        android:textColor="#808A87"
+        />
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="600dp"
+        android:layout_marginLeft="55dp"
+        android:layout_marginTop="70dp"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#f5fbff"
+            android:orientation="vertical"
+            android:elevation="10dp"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="模型精度："/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="93%"
+                android:id="@+id/text_data"
+                />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_marginTop="20dp"
+            android:layout_width="300dp"
+            android:layout_height="200dp"
+            android:id="@+id/inputview"
+            android:src="@mipmap/fuhua"
+            />
+
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:layout_width="300dp"
+            android:layout_height="200dp"
+            android:id="@+id/outputview"
+            android:src="@mipmap/fuhua"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="灰度化"
+            android:background="@color/colorAccent"
+            android:id="@+id/opencvstart"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

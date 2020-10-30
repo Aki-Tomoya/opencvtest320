@@ -1,37 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:paddingTop="16dp"
     android:paddingBottom="16dp"
+    android:background="@mipmap/bg2"
     tools:context=".MainActivity">
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="拍照"
-        android:id="@+id/takephoto"
-        />
-    <Button
-        android:layout_below="@+id/takephoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="拍照区"
-        android:id="@+id/gotokatephoto"/>
-    <Button
-        android:layout_toRightOf="@id/gotokatephoto"
-        android:layout_below="@id/takephoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/gotodata"
-        android:text="data区"
-        />
+
+    <com.skyfishjy.library.RippleBackground
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:id="@+id/content"
+        app:rb_color="#0099CC"
+        app:rb_radius="32dp"
+        app:rb_rippleAmount="4"
+        app:rb_duration="7000"
+        app:rb_scale="4"
+
+        >
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            >
+
+
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:id="@+id/takephoto"
+                android:src="@drawable/round_camera"
+                />
+
+            <ImageView
+                android:id="@+id/index_camera"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@mipmap/camera"
+                android:layout_gravity="center"/>
+
+        </FrameLayout>
+
+    </com.skyfishjy.library.RippleBackground>
+
+
+
     <Button
         android:layout_toRightOf="@+id/gotodata"
-        android:layout_below="@+id/takephoto"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/gotoset"
@@ -42,7 +64,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/gotoopencv"
         android:text="opencv"
-        android:layout_below="@+id/gotokatephoto"/>
+        android:layout_below="@+id/gotoset"
+        />
 
 
 

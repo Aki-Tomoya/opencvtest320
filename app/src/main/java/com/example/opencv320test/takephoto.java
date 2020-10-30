@@ -21,6 +21,7 @@ import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
@@ -30,7 +31,7 @@ import java.util.List;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class takephoto extends AppCompatActivity implements EasyPermissions.PermissionCallbacks{
-    private String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
     static String picPath;
 
     //PATH TO OUR MODEL FILE AND NAMES OF THE INPUT AND OUTPUT NODES
@@ -68,8 +69,18 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
         gotodata = findViewById(R.id.gotodata);
         photoAndCamera();
         //transplant();
+        //Mat mat = Imgcodecs.imread("G:\\cover.png");
 
 
+        findViewById(R.id.gotodata).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(takephoto.this, data.class);
+                intent.putExtra("picPath",picPath);
+                Log.d("takephoto", "onClick: "+picPath);
+                startActivity(intent);
+            }
+        });
 
 
     }

@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.skyfishjy.library.RippleBackground;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
@@ -21,10 +23,18 @@ import org.opencv.imgproc.Imgproc;
 
 public class MainActivity extends AppCompatActivity {
 
+    private RippleBackground rippleBackground;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //水波纹扩散特效
+        rippleBackground=(RippleBackground)findViewById(R.id.content);
+        ImageView imageView = (ImageView) findViewById(R.id.takephoto);
+        rippleBackground.startRippleAnimation();
+
         findViewById(R.id.takephoto).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
