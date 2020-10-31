@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,11 +12,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import org.opencv.imgproc.Imgproc;
+
+
+
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -24,11 +30,14 @@ import com.luck.picture.lib.entity.LocalMedia;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 import java.io.InputStream;
 import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
+
+import static org.opencv.core.CvType.CV_32FC1;
 
 public class takephoto extends AppCompatActivity implements EasyPermissions.PermissionCallbacks{
     private String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -36,9 +45,10 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
 
     //PATH TO OUR MODEL FILE AND NAMES OF THE INPUT AND OUTPUT NODES
     //各节点名称
-    String MODEL_PATH = "file:///src\\main\\assetss";//file:///assets/squeezenet.pb
+    String MODEL_PATH = "src\\main\\assets\\srcnn_model.pb";//file:///assets/squeezenet.pb
     String INPUT_NAME = "input_1";
     String OUTPUT_NAME = "output_1";
+
 
     //TensorFlowInferenceInterface tf;============
 
@@ -46,7 +56,11 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
     //保存图片和图片尺寸的
     float[] PREDICTIONS = new float[1000];
     float[] floatValues;
-    int[] INPUT_SIZE = {224,224,3};
+
+    public static final String EXTRAS_ENDLESS_MODE = "EXTRAS_ENDLESS_MODE";
+    private TensorFlowInferenceInterface tf;
+
+
 
     ImageView iv;
     Button gotodata;
@@ -66,7 +80,11 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_takephoto);
         iv=findViewById(R.id.setPhoto);
-        gotodata = findViewById(R.id.gotodata);
+
+        tf = new TensorFlowInferenceInterface(getAssets(),MODEL_PATH);
+
+
+
         photoAndCamera();
         //transplant();
         //Mat mat = Imgcodecs.imread("G:\\cover.png");
@@ -85,6 +103,10 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
 
     }
 
+
+
+
+
     public void transplant(){
 
 
@@ -94,11 +116,9 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
             @Override
             public void onClick(View view) {
                 try{
-                    InputStream imageStream = getAssets().open(picPath);
-                    Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
                     //imageView.setImageBitmap(bitmap);
 
-                    predict(bitmap);
+                    predict();
 
                 }catch(Exception e){
 
@@ -112,28 +132,28 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
 
 
 
-    public void predict(final Bitmap bitmap){
+    public void predict(){
 
         //Runs inference in background thread
         new AsyncTask<Integer,Integer,Integer>(){
 
             @Override
             protected Integer doInBackground(Integer ...params){
-                //Resize the image into 224 x 224
-                //Bitmap resized_image = ImageUtils.processBitmap(bitmap,224);
-
-                //Normalize the pixels
-                //floatValues = ImageUtils.normalizeBitmap(resized_image,224,127.5f,1.0f);
                 //预处理操作
+                Imgproc.cvtColor(picPath,mRgba,Imgproc.COLOR_YCrCb2BGR);   //灰度化
+
+                floatValues = Imgcodecs.imread();    //添加图片
 
                 //Pass input into the tensorflow
-               // tf.feed(INPUT_NAME,floatValues,1,224,224,3);=======
+               tf.feed(INPUT_NAME,floatValues,1,33,33,3);
 
                 //compute predictions
-               // tf.run(new String[]{OUTPUT_NAME});==========
+               tf.run(new String[]{OUTPUT_NAME});
 
                 //copy the output into the PREDICTIONS array
-               // tf.fetch(OUTPUT_NAME,PREDICTIONS);======
+               tf.fetch(OUTPUT_NAME,PREDICTIONS);
+
+                CvMat labelsMat = cvMat(16, 1, CV_32FC1, labels);
 
 
 
@@ -250,6 +270,9 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
     }
 
     /*===========================================权限========================================================*/
+
+    /*******************************************前端**********************************************************/
+
 
 
 }

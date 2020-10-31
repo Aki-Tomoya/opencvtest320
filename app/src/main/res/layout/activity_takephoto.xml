@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:background="@mipmap/bg2"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="300dp"
@@ -27,7 +28,8 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        
+
+
 
         <Button
             android:id="@+id/gophoto"
@@ -39,6 +41,7 @@
             android:text="重新拍照"
             android:textSize="20sp"
             android:textColor="#666464"
+            style="@style/Button.Radius"
             />
         <Button
             android:id="@+id/gotodata"
@@ -50,7 +53,10 @@
             android:textSize="20sp"
             android:layout_above="@+id/gophoto"
             android:textColor="#666464"
+            style="@style/Button.Radius"
             />
+
+        
 
     </RelativeLayout>
 
