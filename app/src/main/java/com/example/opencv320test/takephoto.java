@@ -41,7 +41,7 @@ import static org.opencv.core.CvType.CV_32FC1;
 
 public class takephoto extends AppCompatActivity implements EasyPermissions.PermissionCallbacks{
     private String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
-    static String picPath;
+    static String picPath,file_pic_path;
 
     //PATH TO OUR MODEL FILE AND NAMES OF THE INPUT AND OUTPUT NODES
     //各节点名称
@@ -81,7 +81,7 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
         setContentView(R.layout.activity_takephoto);
         iv=findViewById(R.id.setPhoto);
 
-        tf = new TensorFlowInferenceInterface(getAssets(),MODEL_PATH);
+        //tf = new TensorFlowInferenceInterface(getAssets(),MODEL_PATH);
 
 
 
@@ -95,7 +95,6 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
             public void onClick(View v) {
                 Intent intent=new Intent(takephoto.this, data.class);
                 intent.putExtra("picPath",picPath);
-                Log.d("takephoto", "onClick: "+picPath);
                 startActivity(intent);
             }
         });
@@ -140,9 +139,9 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
             @Override
             protected Integer doInBackground(Integer ...params){
                 //预处理操作
-                Imgproc.cvtColor(picPath,mRgba,Imgproc.COLOR_YCrCb2BGR);   //灰度化
+               // Imgproc.cvtColor(picPath,mRgba,Imgproc.COLOR_YCrCb2BGR);   //灰度化
 
-                floatValues = Imgcodecs.imread();    //添加图片
+               // floatValues = Imgcodecs.imread();    //添加图片
 
                 //Pass input into the tensorflow
                tf.feed(INPUT_NAME,floatValues,1,33,33,3);
@@ -153,7 +152,7 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
                 //copy the output into the PREDICTIONS array
                tf.fetch(OUTPUT_NAME,PREDICTIONS);
 
-                CvMat labelsMat = cvMat(16, 1, CV_32FC1, labels);
+               // CvMat labelsMat = cvMat(16, 1, CV_32FC1, labels);
 
 
 
@@ -206,12 +205,15 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
     public void showpic(List<LocalMedia> selectList){
         for (LocalMedia media : selectList) {
             picPath=media.getPath();
-            Log.d("taggg", "showpic: picPath ="+media.getPath());
+            int i=media.getPath().length();
+            file_pic_path=media.getPath().substring(8,i);
+            Log.d("taggg", "showpic: picPath ="+media.getPath().substring(8,i));
         }
     }
 
     //Glide图片显示
     public void glidepic(String path){
+        Log.d("tagg", "正常使用的地址 "+path);
         Glide.with(this)
                 .load(path)
                 .into(iv);

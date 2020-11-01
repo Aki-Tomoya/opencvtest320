@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.bumptech.glide.Glide;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
@@ -40,6 +42,7 @@ public class data extends AppCompatActivity {
         setContentView(R.layout.activity_data);
         pic_path=getIntent().getStringExtra("picPath");
         initUI();
+        Glide.with(this).load(pic_path).into(image_input);
         OpenCvstart.setOnClickListener(new data.ProcessClickListener());
     }
 
@@ -48,6 +51,7 @@ public class data extends AppCompatActivity {
 
         @Override
         public void onManagerConnected(int status) {
+
             // TODO Auto-generated method stub
             switch (status) {
                 case BaseLoaderCallback.SUCCESS:
@@ -77,7 +81,7 @@ public class data extends AppCompatActivity {
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Log.d(TAG, "procSrc2Gray: "+pic_path);
+            Log.d(TAG, "读取图片出错！地址： "+pic_path);
         }
 
         srcBitmap = BitmapFactory.decodeStream(fis);
@@ -96,12 +100,17 @@ public class data extends AppCompatActivity {
             // TODO Auto-generated method stub
             procSrc2Gray();
             if (flag) {
-                image_input.setImageBitmap(grayBitmap);
+                Glide.with(data.this)
+                        .load(pic_path)
+                        .into(image_input);
                 OpenCvstart.setText("查看原图");
                 flag = false;
             } else {
-                image_input.setImageBitmap(srcBitmap);
+                Glide.with(data.this)
+                        .load(pic_path)
+                        .into(image_input);
                 OpenCvstart.setText("灰度化");
+
                 flag = true;
             }
         }
