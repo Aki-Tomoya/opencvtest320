@@ -2,14 +2,19 @@ package com.example.opencv320test;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.content.CursorLoader;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -32,7 +37,11 @@ import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -48,6 +57,7 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
     String MODEL_PATH = "src\\main\\assets\\srcnn_model.pb";//file:///assets/squeezenet.pb
     String INPUT_NAME = "input_1";
     String OUTPUT_NAME = "output_1";
+    Bitmap bitmap;
 
 
     //TensorFlowInferenceInterface tf;============
@@ -86,6 +96,7 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
 
 
         photoAndCamera();
+        getbit();
         //transplant();
         //Mat mat = Imgcodecs.imread("G:\\cover.png");
 
@@ -94,13 +105,28 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(takephoto.this, data.class);
-                intent.putExtra("picPath",picPath);
+                intent.putExtra("picPath",getRealPathFromURI(Uri.parse((picPath))));
+                //saveBitmap2file(bitmap,"test");
+                Log.d("piccc", "onClick: "+getRealPathFromURI(Uri.parse((picPath))));
+
                 startActivity(intent);
             }
         });
 
 
     }
+
+    //转换uri地址
+    private String getRealPathFromURI(Uri contentUri) { //传入图片uri地址
+        String[] proj = { MediaStore.Images.Media.DATA };
+        CursorLoader loader = new CursorLoader(takephoto.this, contentUri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
+
 
 
 
@@ -207,9 +233,43 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
             picPath=media.getPath();
             int i=media.getPath().length();
             file_pic_path=media.getPath().substring(8,i);
-            Log.d("taggg", "showpic: picPath ="+media.getPath().substring(8,i));
+            Log.d("taggg", "showpic: picPath ="+media.getPath());
         }
     }
+
+    public void getbit(){
+         bitmap=BitmapFactory.decodeFile(picPath);
+    }
+
+    //bitmap测试
+    public static void saveBitmap2file(Bitmap bmp, String filename)
+    {
+        Bitmap.CompressFormat format = Bitmap.CompressFormat.JPEG;
+        int quality = 100;
+        OutputStream stream = null;
+        try
+        {
+
+            stream = new FileOutputStream(Environment
+                    .getExternalStorageDirectory().getPath()
+                    + "/"
+                    + filename
+                    + ".jpg");
+        } catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        bmp.compress(format, quality, stream);
+        try
+        {
+            stream.flush();
+            stream.close();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 
     //Glide图片显示
     public void glidepic(String path){

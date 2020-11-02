@@ -4,6 +4,7 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +33,7 @@ public class data extends AppCompatActivity {
     private  static  FileInputStream fis;
     String pic_path;
     Button OpenCvstart;
-    ImageView image_input;
+    ImageView image_input,image_output;
     Bitmap srcBitmap;
     Bitmap grayBitmap;
 
@@ -41,10 +42,23 @@ public class data extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data);
         pic_path=getIntent().getStringExtra("picPath");
+
+
+
         initUI();
         Glide.with(this).load(pic_path).into(image_input);
-        OpenCvstart.setOnClickListener(new data.ProcessClickListener());
+
+        OpenCvstart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                procSrc2Gray();
+                Glide.with(data.this).load(grayBitmap).into(image_output);
+            }
+        });
     }
+
+
+
 
     //OpenCV库加载并初始化成功后的回调函数
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -68,6 +82,7 @@ public class data extends AppCompatActivity {
     public void initUI() {
         OpenCvstart = (Button) findViewById(R.id.opencvstart);
         image_input = (ImageView) findViewById(R.id.inputview);
+        image_output=findViewById(R.id.outputview);
         Log.i(TAG, "初始化UI成功");
 
     }
@@ -76,15 +91,8 @@ public class data extends AppCompatActivity {
         Mat rgbMat = new Mat();
         Mat grayMat = new Mat();
 
-        try {
-             fis= new FileInputStream(pic_path);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.d(TAG, "读取图片出错！地址： "+pic_path);
-        }
-
-        srcBitmap = BitmapFactory.decodeStream(fis);
+//        int i=pic_path.length();
+        srcBitmap = BitmapFactory.decodeFile(pic_path);
         grayBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
 
         Utils.bitmapToMat(srcBitmap, rgbMat);//convert original bitmap to Mat, R G B.
@@ -93,29 +101,7 @@ public class data extends AppCompatActivity {
         Log.i(TAG, "procSrc2Gray成功");
     }
 
-    private class ProcessClickListener implements View.OnClickListener {
 
-        @Override
-        public void onClick(View v) {
-            // TODO Auto-generated method stub
-            procSrc2Gray();
-            if (flag) {
-                Glide.with(data.this)
-                        .load(pic_path)
-                        .into(image_input);
-                OpenCvstart.setText("查看原图");
-                flag = false;
-            } else {
-                Glide.with(data.this)
-                        .load(pic_path)
-                        .into(image_input);
-                OpenCvstart.setText("灰度化");
-
-                flag = true;
-            }
-        }
-
-    }
 
     @Override
     public void onResume() {

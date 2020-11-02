@@ -67,7 +67,9 @@ public class Opencvtest extends AppCompatActivity {
     public void procSrc2Gray() {
         Mat rgbMat = new Mat();
         Mat grayMat = new Mat();
+
         srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_1);
+
         grayBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
         Utils.bitmapToMat(srcBitmap, rgbMat);//convert original bitmap to Mat, R G B.
         Imgproc.cvtColor(rgbMat, grayMat, Imgproc.COLOR_RGB2GRAY);//rgbMat to gray grayMat
