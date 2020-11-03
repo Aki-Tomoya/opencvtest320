@@ -1,52 +1,46 @@
 package com.example.opencv320test;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.loader.content.CursorLoader;
-
 import android.Manifest;
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.content.CursorLoader;
+
 import com.bumptech.glide.Glide;
-import org.opencv.imgproc.Imgproc;
-
-
-
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.core.Scalar;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
+import org.opencv.imgcodecs.Imgcodecs;
+
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static org.opencv.core.CvType.CV_32FC1;
+import static org.opencv.core.CvType.CV_32F;
+
 
 public class takephoto extends AppCompatActivity implements EasyPermissions.PermissionCallbacks{
     private String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -54,18 +48,15 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
 
     //PATH TO OUR MODEL FILE AND NAMES OF THE INPUT AND OUTPUT NODES
     //各节点名称
-    String MODEL_PATH = "src\\main\\assets\\srcnn_model.pb";//file:///assets/squeezenet.pb
-    String INPUT_NAME = "input_1";
-    String OUTPUT_NAME = "output_1";
+    private static  String MODEL_FILE = "file:///android_asset/srcnn_model.pb"; //model文件路径
+    String INPUT_NAME = "input_1";                      //输入节点名称
+    String OUTPUT_NAME = "output_1";                    //输出节点名称
     Bitmap bitmap;
 
 
-    //TensorFlowInferenceInterface tf;============
-
-    //ARRAY TO HOLD THE PREDICTIONS AND FLOAT VALUES TO HOLD THE IMAGE DATA
     //保存图片和图片尺寸的
-    float[] PREDICTIONS = new float[1000];
-    float[] floatValues;
+    float[] PREDICTIONS;                              //生成输出数组
+    float[] floatValues = new float[33*33];           //用宽度以及高度生成输入数组
 
     public static final String EXTRAS_ENDLESS_MODE = "EXTRAS_ENDLESS_MODE";
     private TensorFlowInferenceInterface tf;
@@ -91,14 +82,9 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
         setContentView(R.layout.activity_takephoto);
         iv=findViewById(R.id.setPhoto);
 
-        //tf = new TensorFlowInferenceInterface(getAssets(),MODEL_PATH);
-
-
-
         photoAndCamera();
         getbit();
         //transplant();
-        //Mat mat = Imgcodecs.imread("G:\\cover.png");
 
 
         findViewById(R.id.gotodata).setOnClickListener(new View.OnClickListener() {
@@ -143,7 +129,9 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
                 try{
                     //imageView.setImageBitmap(bitmap);
 
-                    predict();
+                    //byte []result = predict();         //传入灰度化图片
+                    //将byte数组转化为图片
+
 
                 }catch(Exception e){
 
@@ -157,37 +145,26 @@ public class takephoto extends AppCompatActivity implements EasyPermissions.Perm
 
 
 
-    public void predict(){
-
-        //Runs inference in background thread
-        new AsyncTask<Integer,Integer,Integer>(){
-
-            @Override
-            protected Integer doInBackground(Integer ...params){
-                //预处理操作
-               // Imgproc.cvtColor(picPath,mRgba,Imgproc.COLOR_YCrCb2BGR);   //灰度化
-
-               // floatValues = Imgcodecs.imread();    //添加图片
-
-                //Pass input into the tensorflow
-               tf.feed(INPUT_NAME,floatValues,1,33,33,3);
-
-                //compute predictions
-               tf.run(new String[]{OUTPUT_NAME});
-
-                //copy the output into the PREDICTIONS array
-               tf.fetch(OUTPUT_NAME,PREDICTIONS);
-
-               // CvMat labelsMat = cvMat(16, 1, CV_32FC1, labels);
-
-
-
-                return 0;
-            }
-
-        }.execute(0);
-
+    public void predict(String blankimage) {
+        Log.i("running", "TensorFlow Mobile running ......");
+        //生成float数组保存图片信息
+        Mat blank = Imgcodecs.imread(blankimage);
+        //转化为float数组
+        blank.convertTo(blank,CV_32F);
+        //将blank传入模型
+        tf.feed(INPUT_NAME,floatValues,1,33,33,1);
+        //运行模型
+        tf.run(new String[]{OUTPUT_NAME});
+        //输出数据
+        tf.fetch(OUTPUT_NAME,PREDICTIONS);
+        Log.i("stoprunning", "TensorFlow Mobile running ......");
+        //将float数组变为mat对象
+        //Mat result = new Mat(33,33,CV_32F,PREDICTIONS);
+        //将新的mat对象保存为图片
+        //Imgcodecs.imwrite("result.jpg",result);
     }
+
+    //TODO:预处理，将灰度图切割为n块33*33的图片，将小图片传入模型中；解决float数组转Mat对象问题，将保存的图片找到并显示在data界面中。
 
 
     public Object[] argmax(float[] array){
